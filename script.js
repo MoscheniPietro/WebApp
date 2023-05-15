@@ -9,21 +9,21 @@ let debug=1;
 
 class weatherForecast
 {
-    constructor(speciesCode, comName, sciName, locId, locName, obsDt, howMany, lat, lng, obsValid, obsReviewed, subId)
+    constructor(spCode, comName, sciName, locId, locName, obsDt, hMany, lat, lng, obsValid, obsReviewed, sId)
     {
-        this.speciesCode = speciesCode;
-        this.comName = comName;
-        this.sciName = sciName;
-        this.locId = locId;
-        this.locName = locName;
-        this.obsDt = obsDt;
-        this.howMany = howMany;
-        this.lat = lat;
-        this.lng = lng;
-        this.obsValid = obsValid;
-        this.obsReviewed = obsReviewed;
+        this.speciesCode = spCode;
+        this.commonName = comName;
+        this.scientificName = sciName;
+        this.locationId = locId;
+        this.locationName = locName;
+        this. observationDt = obsDt;
+        this.howMany = hMany;
+        this.latitude = lat;
+        this.longitude = lng;
+        this.observationValid = obsValid;
+        this.observatinReviewed = obsReviewed;
         this.locationPrivate = locationPrivate;
-        this.subId = subId;
+        this.subId = sId;
       }
 }
 
@@ -56,26 +56,17 @@ async function getCityByCoordinates ()
 
 const url_carto_cdn = 'http://{1-4}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
 
+//connects from html element and script
 const textContent = document.getElementById("content");
 const search = document.getElementById("searchUser");
 const weatherButton = document.getElementById("submit");
 const image = document.querySelector(".image img");
+
 let selectElement;
-var hour;
-var weather;
 let decimals = 1;
 var output;
 
-
 var maxPercentage = 100;
-
-
-function getHour()
-{
-    selectElement = document.querySelector('#chooseHour');
-    hour = selectElement.options[selectElement.selectedIndex].value;
-    //console.log("Selection: ",selectElement, "HOUR: ", hour);
-}
 /**
  * Click event listener
  */
@@ -175,7 +166,6 @@ function init() {
 
     // Create a click event to call getMapCoordOnClick()
     map.on("click", (e) => getMapCoordOnClick(e));
-
 }
 
 
@@ -183,7 +173,8 @@ function init() {
  * Get the weather info when click on the map
  * @param evt click event
  */
-const getMapCoordOnClick = (evt) => {
+const getMapCoordOnClick = (evt) => 
+{
     console.log("getMapCoordOnClick invoked");
     //tuple of coordinates
     const lonLat = ol.proj.toLonLat(evt.coordinate);
@@ -193,30 +184,10 @@ const getMapCoordOnClick = (evt) => {
     currentCity.longitude = lonLat[0];
     currentCity.latitude = lonLat[1];
     console.log(currentCity);
-    // doing the query to get forecast (or load it in current city)
+
     // Also only represent the city name on the console, can't print it and call it now; It's the problem of async and cannot get the OBJECT correctly
     getCityByCoordinates();
 }
-
-
-/**
- * Function used to retrieve weather from search bar
- * @returns {Promise<void>} city forecast
- */
-function getWeatherOnSearch()
-{
-    cleanCurrentCity();
-    currentCity.cityName = search.value;
-    getCityByName().then(playSound);
-}
-
-/**
- * Function event on click on search button
- */
-weatherButton.addEventListener("click", () => {
-    getWeatherOnSearch().then(r => console.log("Sound"));
-});
-
 
 /**
  * Function for zoom in the map to the specific city
@@ -242,8 +213,6 @@ class city
 }
 var currentCity = new city();
 var currentCityForecast = []; //array of forecast of 12 hours
-
-
 
 function cleanCurrentCity()
 {
