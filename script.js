@@ -1,55 +1,117 @@
-const key="x-ebirdapitoken";
-const key_value="{{x-ebirdapitoken}}"
+const APIKey="qla3hf2acmq";
 let debug=1;
-//const express = require('express');
-//const app = express();
-//const cors = require('cors');
-//app.use(cors());
 
-
-class weatherForecast
+class birdsData
 {
-    constructor(spCode, comName, sciName, locId, locName, obsDt, hMany, lat, lng, obsValid, obsReviewed, sId)
+    constructor(spCode, comName, sciName, locId, locName, obsDt, hMany, lat, lng, obsValid, obsReviewed,locPrivate, sId)
     {
         this.speciesCode = spCode;
         this.commonName = comName;
         this.scientificName = sciName;
         this.locationId = locId;
         this.locationName = locName;
-        this. observationDt = obsDt;
+        this.observationDt = obsDt;
         this.howMany = hMany;
         this.latitude = lat;
         this.longitude = lng;
         this.observationValid = obsValid;
         this.observatinReviewed = obsReviewed;
-        this.locationPrivate = locationPrivate;
+        this.locationPrivate = locPrivate;
         this.subId = sId;
       }
 }
 
-async function getCityByCoordinates ()
+var observatedBirdsArray = [];  //array containing all BirdsData from JSON
+
+/**
+ * Function parses json an saves info into array
+ * @param allBirds
+ */
+function saveBirdsObservation(allBirds)
 {
-    console.log("Avvio get dalle coordinate"); 
+    allBirds.forEach((obsBird) =>
+    {
+        let singleBirdObs = new birdsData();
+        singleBirdObs.speciesCode = obsBird.speciesCode;
+        singleBirdObs.commonName = obsBird.commonName;
+        singleBirdObs.scientificName = obsBird.scientificName;
+        //ETC finire di compilare tutti i campi come da struttura sopra
+        /*singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;
+        singleBirdObs. = obsBird;*/
+
+        observatedBirdsArray.push(singleBirdObs);
+    })
+}
+
+/**
+ * this function updates GUI with obs birds
+ */
+function updateGUI()
+{
+
+}
+
+/**
+ * Recent nearby observations
+ * @returns {Promise<void>}
+ */
+async function getBirdsByCoordinates ()
+{
+    console.log("Avvio get dalle coordinate");
+
+    //headers setup
+    var myHeaders = new Headers();
+    myHeaders.append("X-eBirdApiToken", APIKey);
+
+
     const locationBaseUrl = "https://api.ebird.org/v2/data/obs/geo/recent?";
-    //const query = 'lat=' + currentCity.latitude.toFixed(2).toString() + '&lng=' + currentCity.longitude.toFixed(2).toString();
-    const query = `lat=${currentCity.latitude.toFixed(2)}&lng=${currentCity.longitude.toFixed(2)}`;
-    console.log(query);
-    console.log(locationBaseUrl + query);
-    const res = await fetch(locationBaseUrl + query, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest', // Questo header è richiesto dall'API di eBird
-        'X-eBirdApiToken': 'x-ebirdapitoken', // Sostituisci con il tuo token API di eBird
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'
-      }
-    });
-    const tmpCity = await res.json()
-    if (debug === 1) console.log(tmpCity);
-    const {LocalizedName, Key} = tmpCity;
+    const query = `lat=${currentCity.latitude.toFixed(2)}&lng=${currentCity.longitude.toFixed(2)}&key=${APIKey}`;
+    if (debug === 1)console.log(query);
+    if (debug === 1)console.log(locationBaseUrl + query);
+    const res = await fetch(locationBaseUrl + query);
+    const allBirds = await res.json()
+    if (debug === 1) console.log(allBirds);
+    const {LocalizedName, Key} = allBirds;
 
     //fill our city info
     currentCity.cityName = LocalizedName;
     currentCity.cityCode = Key;
+    if (debug === 1) console.log(currentCity);
+    saveBirdsObservation(allBirds);
+}
+
+/**
+ * This function get the city key given the name, Milan
+ * I can't optimize avoiding queries because a mm move of click can change the city
+ * @returns {Promise<void>} populates the current city
+ */
+
+//AAA Vedere se farla funzionare o rimuoverla
+async function getBirdsByCityName()
+{
+    const locationBaseUrl = "https://dataservice.accuweather.com/locations/v1/cities/search";
+    const cityName = currentCity.cityName;
+
+    const res = await fetch(locationBaseUrl + query);
+    const tmpCity = await res.json()
+
+    if(debug === 1)
+    {
+        console.log("City by name\n");
+        console.log(tmpCity);
+    }
+
+    const {GeoPosition, Key} = tmpCity[0];
+    //fill our city info
+    currentCity.cityCode = Key;
+    //unused in further development ATM
+    currentCity.latitude = GeoPosition.Latitude;
+    currentCity.longitude = GeoPosition.Longitude;
     cities.push(currentCity);
     if (debug === 1) console.log(currentCity);
 }
@@ -77,17 +139,23 @@ var myview = new ol.View({
         zoom: 2,
     })
 
+const centerCoordinates = ol.proj.fromLonLat([12.5674, 41.8719]); // Coordinate di Roma
+const zoomLevel = 6;
+
 window.onload = init(); // Call init() when we open the window
 function init() {
     const map = new ol.Map({
         target: 'map',
         layers: [
             new ol.layer.Tile({
-                source: new ol.source.XYZ({url: url_carto_cdn})
+                source: new ol.source.OSM()
             })
         ],
-        view: myview
-    })
+        view: new ol.View({
+            center: centerCoordinates,
+            zoom: zoomLevel
+        })
+    });
 
     // The following is to create three different layers. openStreetMapStandard, openStreetMapHumanitarian and stamenTerrain
     const openStreetMapStandard = new ol.layer.Tile({
@@ -186,7 +254,7 @@ const getMapCoordOnClick = (evt) =>
     console.log(currentCity);
 
     // Also only represent the city name on the console, can't print it and call it now; It's the problem of async and cannot get the OBJECT correctly
-    getCityByCoordinates();
+    getBirdsByCoordinates().then(updateGUI);
 }
 
 /**
