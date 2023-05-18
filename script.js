@@ -57,6 +57,9 @@ function saveBirdsObservation(allBirds)
         observatedBirdsNamesArray.push(singleBirdObs.commonName);
     })
 
+    if (debug === 1) console.log("Birds Names")
+    if (debug === 1) console.log(observatedBirdsNamesArray);
+
     if (debug === 1) console.log("Saved Birds")
     if (debug === 1) console.log(observatedBirdsArray);
 }
