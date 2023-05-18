@@ -48,26 +48,31 @@ function getHour() {
  * @param allBirds
  */
 
-//ETC finire di compilare tutti i campi come da struttura sopra
+/**
+ * Get data from JS
+ * @param allBirds
+ * Need to put ot the right side of the foreach the name of the field that you see on the console
+ */
 function saveBirdsObservation(allBirds)
 {
     //pulizia strutture
-    observatedBirdsArray.clear();
-    observatedBirdsNamesArray.clear();
+    observatedBirdsArray.clear;
+    observatedBirdsNamesArray.clear;
 
     allBirds.forEach((obsBird) =>
     {
         let singleBirdObs = new birdsData();
         singleBirdObs.speciesCode = obsBird.speciesCode;
-        singleBirdObs.commonName = obsBird.commonName;
-        singleBirdObs.scientificName = obsBird.scientificName;
-        singleBirdObs.locationId = obsBird.locationId;
-        singleBirdObs.locationName = obsBird.locationName;
-        singleBirdObs.observationDt = obsBird.observationDt;
+        singleBirdObs.commonName = obsBird.comName;
+        singleBirdObs.scientificName = obsBird.sciName;
+        singleBirdObs.locationId = obsBird.locId;
+        singleBirdObs.locationName = obsBird.locName;
+        singleBirdObs.observationDt = obsBird.obsDt;
         singleBirdObs.howMany = obsBird.howMany;
-        singleBirdObs.latitude = obsBird.latitude;
-        singleBirdObs.longitude = obsBird.longitude;
-        singleBirdObs.observatinReviewed = obsBird.observatinReviewed;
+        singleBirdObs.latitude = obsBird.lat;
+        singleBirdObs.longitude = obsBird.lng;
+        singleBirdObs.observationValid = obsBird.obsReviewed;
+        singleBirdObs.observatinReviewed = obsBird.obsReviewed;
         singleBirdObs.locationPrivate = obsBird.locationPrivate;
         singleBirdObs.subId = obsBird.subId;
 
@@ -106,7 +111,7 @@ function loadFoundBirds() {
 function getSelectedBirdData() {
     var currentSelectedBirdObservation;
 
-    var selectedBirdName = document.getElementById('birdComboBox').value;
+    var selectedBirdName = document.getElementById('birdComboBox');
     for (var i = 0; i < observatedBirdsArray.length; i++) {
       var observation = observatedBirdsArray[i];
   
@@ -123,7 +128,7 @@ function getSelectedBirdData() {
 /**
  * this function updates GUI with obs birds
  */
-function updateGUI()
+/*function updateGUI()
 {
     let selectedBird = getSelectedBirdData();
     console.log(selectedBirdName);
@@ -146,7 +151,7 @@ function updateGUI()
     <h4 class="font-c">${"Snow: " + selectedBird.subId.toFixed(decimals) + " mm"} </h4>
     `;
     
-}
+}*/
 
 /**
  * Recent nearby observations
