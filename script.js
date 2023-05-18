@@ -27,6 +27,8 @@ var observatedBirdsArray = [];  //array containing all BirdsData from JSON
  * Function parses json an saves info into array
  * @param allBirds
  */
+
+//ETC finire di compilare tutti i campi come da struttura sopra
 function saveBirdsObservation(allBirds)
 {
     allBirds.forEach((obsBird) =>
@@ -35,14 +37,15 @@ function saveBirdsObservation(allBirds)
         singleBirdObs.speciesCode = obsBird.speciesCode;
         singleBirdObs.commonName = obsBird.commonName;
         singleBirdObs.scientificName = obsBird.scientificName;
-        //ETC finire di compilare tutti i campi come da struttura sopra
-        /*singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;
-        singleBirdObs. = obsBird;*/
+        singleBirdObs.locationId = obsBird.locationId;
+        singleBirdObs.locationName = obsBird.locationName;
+        singleBirdObs.observationDt = obsBird.observationDt;
+        singleBirdObs.howMany = obsBird.howMany;
+        singleBirdObs.latitude = obsBird.latitude;
+        singleBirdObs.longitude = obsBird.longitude;
+        singleBirdObs.observatinReviewed = obsBird.observatinReviewed;
+        singleBirdObs.locationPrivate = obsBird.locationPrivate;
+        singleBirdObs.subId = obsBird.subId;
 
         observatedBirdsArray.push(singleBirdObs);
     })
@@ -53,7 +56,7 @@ function saveBirdsObservation(allBirds)
  */
 function updateGUI()
 {
-
+    
 }
 
 /**
