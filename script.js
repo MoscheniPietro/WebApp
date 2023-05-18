@@ -22,15 +22,21 @@ class birdsData
 }
 
 var observatedBirdsArray = [];  //array containing all BirdsData from JSON
+var observatedBirdsNamesArray = []; //array containing all birds names from json
+var selectedBird;
 
 /**
- * Function parses json an saves info into array
+ * Function parses json a saves info into array
  * @param allBirds
  */
 
 //ETC finire di compilare tutti i campi come da struttura sopra
 function saveBirdsObservation(allBirds)
 {
+    //pulizia strutture
+    observatedBirdsArray.clear();
+    observatedBirdsNamesArray.clear();
+
     allBirds.forEach((obsBird) =>
     {
         let singleBirdObs = new birdsData();
@@ -48,7 +54,30 @@ function saveBirdsObservation(allBirds)
         singleBirdObs.subId = obsBird.subId;
 
         observatedBirdsArray.push(singleBirdObs);
+        observatedBirdsNamesArray.push(singleBirdObs.commonName);
     })
+
+    if (debug === 1) console.log("Saved Birds")
+    if (debug === 1) console.log(observatedBirdsArray);
+}
+
+function loadFoundBirds()
+{
+    //TODO in questa funzione bisogna caricare tuitti i nomi in observatedBirdsNamesArray nella combobox per la selezione
+}
+
+/**
+ *
+ */
+function getSelectedBirdData()
+{
+    var currentSelectedBirdObservation;
+
+    //TODO fare ricerca in observatedBirdsArray dell'elemento selezionato nella combobox (che avrai salvato in selectedBird)
+    // con observatedBirdsArray[selectedBird] o qualcosa del genere
+    //alla fine avrai currentSelectedBirdObservation = observatedBirdsArray[selectedBird] non è così, ma il concetto è questo
+
+    return currentSelectedBirdObservation;
 }
 
 /**
@@ -56,6 +85,26 @@ function saveBirdsObservation(allBirds)
  */
 function updateGUI()
 {
+    let electedBird = getSelectedBirdData();
+    console.log(selectedBird);
+
+    //TODO aggiungere le variabili corrette
+
+    //updating details into HTML
+    textContent.innerHTML = `
+    <h2 class="font-c">${electedBird.cityName.toUpperCase()}</h2>
+    <h4 class="font-c">${"Lat: " + electedBird.latitude.toFixed(6)} </h4>
+    <h4 class="font-c">${"Lon: " + electedBird.longitude.toFixed(6)} </h4>
+    <h3 class="font-c">${electedBird.iconPhrase}</h3>    
+    <h4 class="font-c">${"Temperature: " + electedBird.temperatureValue.toFixed(decimals)} &degC</h4>
+    <h4 class="font-c">${"Humidity: " + electedBird.relativeHumidity.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Wind Speed: " + electedBird.windSpeed.toFixed(decimals) + " km/h"}</h4>
+    <h4 class="font-c">${"Cloud Cover: " + electedBird.cloudCover.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain Probability: " + electedBird.rainProbability.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain: " + electedBird.rainValue.toFixed(decimals) + " mm"}</h4>
+    <h4 class="font-c">${"Snow Probability: " + electedBird.snowProbability.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Snow: " + electedBird.snowValue.toFixed(decimals) + " mm"} </h4>
+    `;
     
 }
 
