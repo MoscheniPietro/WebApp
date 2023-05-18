@@ -21,9 +21,9 @@ class birdsData
       }
 }
 
-const textContent = document.getElementById("content");
+/*const textContent = document.getElementById("content");
 const search = document.getElementById("searchUser");
-const weatherButton = document.getElementById("submit");
+const weatherButton = document.getElementById("submit");*/
 
 var observatedBirdsArray = [];  //array containing all BirdsData from JSON
 var observatedBirdsNamesArray = []; //array containing all birds names from json
@@ -32,14 +32,16 @@ var selectedBirdName;
 /**
  *
  */
-function getHour()
-{
-
-    //TODO sistema per prendere il nome dell'uccello selezionato nella combobox
-    selectElement = document.querySelector('#chooseHour');
+function getHour() {
+    var selectedBirdName;
+  
+    
+    var selectElement = document.querySelector('#birdComboBox');
     selectedBirdName = selectElement.options[selectElement.selectedIndex].value;
-    //console.log("Selection: ",selectElement, "HOUR: ", hour);
-}
+  
+    return selectedBirdName;
+  }
+  
 
 /**
  * Function parses json a saves info into array
@@ -80,24 +82,43 @@ function saveBirdsObservation(allBirds)
     if (debug === 1) console.log(observatedBirdsArray);
 }
 
-function loadFoundBirds()
-{
-    //TODO in questa funzione bisogna caricare tuitti i nomi in observatedBirdsNamesArray nella combobox per la selezione
-}
+function loadFoundBirds() {
+    
+    var combobox = document.getElementById('birdComboBox');
+    combobox.innerHTML = '';
+  
+    for (var i = 0; i < observatedBirdsNamesArray.length; i++) {
+      var name = observatedBirdsNamesArray[i];
+      var option = document.createElement('option');
+
+      option.text = name;
+      option.value = name;
+  
+      
+      combobox.appendChild(option);
+    }
+  }
+  
 
 /**
  *
  */
-function getSelectedBirdData()
-{
+function getSelectedBirdData() {
     var currentSelectedBirdObservation;
 
-    //TODO fare ricerca in observatedBirdsArray dell'elemento selezionato nella combobox (che avrai salvato in selectedBirdName)
-    // con observatedBirdsArray[selectedBirdName] o qualcosa del genere
-    //alla fine avrai currentSelectedBirdObservation = observatedBirdsArray[selectedBird] non è così, ma il concetto è questo
-
+    var selectedBirdName = document.getElementById('birdComboBox').value;
+    for (var i = 0; i < observatedBirdsArray.length; i++) {
+      var observation = observatedBirdsArray[i];
+  
+      if (observation.name === selectedBirdName) {
+        currentSelectedBirdObservation = observation;
+        break;
+      }
+    }
+  
     return currentSelectedBirdObservation;
-}
+  }
+  
 
 /**
  * this function updates GUI with obs birds
@@ -111,18 +132,18 @@ function updateGUI()
 
     //updating details into HTML
     textContent.innerHTML = `
-    <h2 class="font-c">${selectedBird.cityName.toUpperCase()}</h2>
-    <h4 class="font-c">${"Lat: " + selectedBird.latitude.toFixed(6)} </h4>
-    <h4 class="font-c">${"Lon: " + selectedBird.longitude.toFixed(6)} </h4>
-    <h3 class="font-c">${selectedBird.iconPhrase}</h3>    
-    <h4 class="font-c">${"Temperature: " + selectedBird.temperatureValue.toFixed(decimals)} &degC</h4>
-    <h4 class="font-c">${"Humidity: " + selectedBird.relativeHumidity.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Wind Speed: " + selectedBird.windSpeed.toFixed(decimals) + " km/h"}</h4>
-    <h4 class="font-c">${"Cloud Cover: " + selectedBird.cloudCover.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain Probability: " + selectedBird.rainProbability.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain: " + selectedBird.rainValue.toFixed(decimals) + " mm"}</h4>
-    <h4 class="font-c">${"Snow Probability: " + selectedBird.snowProbability.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Snow: " + selectedBird.snowValue.toFixed(decimals) + " mm"} </h4>
+    <h2 class="font-c">${selectedBird.speciesCode.toUpperCase()}</h2>
+    <h4 class="font-c">${"Lat: " + selectedBird.commonName.toFixed(6)} </h4>
+    <h4 class="font-c">${"Lon: " + selectedBird.scientificName.toFixed(6)} </h4>
+    <h3 class="font-c">${selectedBird.locationId}</h3>    
+    <h4 class="font-c">${"Temperature: " + selectedBird.locationName.toFixed(decimals)} &degC</h4>
+    <h4 class="font-c">${"Humidity: " + selectedBird.observationDt.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Wind Speed: " + selectedBird.howMany.toFixed(decimals) + " km/h"}</h4>
+    <h4 class="font-c">${"Cloud Cover: " + selectedBird.latitude.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain Probability: " + selectedBird.longitude.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain: " + selectedBird.observatinReviewed.toFixed(decimals) + " mm"}</h4>
+    <h4 class="font-c">${"Snow Probability: " + selectedBird.locationPrivate.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Snow: " + selectedBird.subId.toFixed(decimals) + " mm"} </h4>
     `;
     
 }
