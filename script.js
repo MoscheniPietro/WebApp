@@ -27,15 +27,19 @@ const weatherButton = document.getElementById("submit");
 
 var observatedBirdsArray = [];  //array containing all BirdsData from JSON
 var observatedBirdsNamesArray = []; //array containing all birds names from json
-var selectedBird;
-
+var selectedBirdName;
 
 /**
- * Function event on click on search button
+ *
  */
-weatherButton.addEventListener("click", () => {
-    getSelectedBirdData().then(r => console.log("Sound"));
-});
+function getHour()
+{
+
+    //TODO sistema per prendere il nome dell'uccello selezionato nella combobox
+    selectElement = document.querySelector('#chooseHour');
+    selectedBirdName = selectElement.options[selectElement.selectedIndex].value;
+    //console.log("Selection: ",selectElement, "HOUR: ", hour);
+}
 
 /**
  * Function parses json a saves info into array
@@ -88,8 +92,8 @@ function getSelectedBirdData()
 {
     var currentSelectedBirdObservation;
 
-    //TODO fare ricerca in observatedBirdsArray dell'elemento selezionato nella combobox (che avrai salvato in selectedBird)
-    // con observatedBirdsArray[selectedBird] o qualcosa del genere
+    //TODO fare ricerca in observatedBirdsArray dell'elemento selezionato nella combobox (che avrai salvato in selectedBirdName)
+    // con observatedBirdsArray[selectedBirdName] o qualcosa del genere
     //alla fine avrai currentSelectedBirdObservation = observatedBirdsArray[selectedBird] non è così, ma il concetto è questo
 
     return currentSelectedBirdObservation;
@@ -100,25 +104,25 @@ function getSelectedBirdData()
  */
 function updateGUI()
 {
-    let electedBird = getSelectedBirdData();
-    console.log(selectedBird);
+    let selectedBird = getSelectedBirdData();
+    console.log(selectedBirdName);
 
     //TODO aggiungere le variabili corrette
 
     //updating details into HTML
     textContent.innerHTML = `
-    <h2 class="font-c">${electedBird.cityName.toUpperCase()}</h2>
-    <h4 class="font-c">${"Lat: " + electedBird.latitude.toFixed(6)} </h4>
-    <h4 class="font-c">${"Lon: " + electedBird.longitude.toFixed(6)} </h4>
-    <h3 class="font-c">${electedBird.iconPhrase}</h3>    
-    <h4 class="font-c">${"Temperature: " + electedBird.temperatureValue.toFixed(decimals)} &degC</h4>
-    <h4 class="font-c">${"Humidity: " + electedBird.relativeHumidity.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Wind Speed: " + electedBird.windSpeed.toFixed(decimals) + " km/h"}</h4>
-    <h4 class="font-c">${"Cloud Cover: " + electedBird.cloudCover.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain Probability: " + electedBird.rainProbability.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain: " + electedBird.rainValue.toFixed(decimals) + " mm"}</h4>
-    <h4 class="font-c">${"Snow Probability: " + electedBird.snowProbability.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Snow: " + electedBird.snowValue.toFixed(decimals) + " mm"} </h4>
+    <h2 class="font-c">${selectedBird.cityName.toUpperCase()}</h2>
+    <h4 class="font-c">${"Lat: " + selectedBird.latitude.toFixed(6)} </h4>
+    <h4 class="font-c">${"Lon: " + selectedBird.longitude.toFixed(6)} </h4>
+    <h3 class="font-c">${selectedBird.iconPhrase}</h3>    
+    <h4 class="font-c">${"Temperature: " + selectedBird.temperatureValue.toFixed(decimals)} &degC</h4>
+    <h4 class="font-c">${"Humidity: " + selectedBird.relativeHumidity.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Wind Speed: " + selectedBird.windSpeed.toFixed(decimals) + " km/h"}</h4>
+    <h4 class="font-c">${"Cloud Cover: " + selectedBird.cloudCover.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain Probability: " + selectedBird.rainProbability.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Rain: " + selectedBird.rainValue.toFixed(decimals) + " mm"}</h4>
+    <h4 class="font-c">${"Snow Probability: " + selectedBird.snowProbability.toFixed(decimals)} &percnt;</h4>
+    <h4 class="font-c">${"Snow: " + selectedBird.snowValue.toFixed(decimals) + " mm"} </h4>
     `;
     
 }
