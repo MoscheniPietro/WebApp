@@ -21,9 +21,21 @@ class birdsData
       }
 }
 
+const textContent = document.getElementById("content");
+const search = document.getElementById("searchUser");
+const weatherButton = document.getElementById("submit");
+
 var observatedBirdsArray = [];  //array containing all BirdsData from JSON
 var observatedBirdsNamesArray = []; //array containing all birds names from json
 var selectedBird;
+
+
+/**
+ * Function event on click on search button
+ */
+weatherButton.addEventListener("click", () => {
+    getSelectedBirdData().then(r => console.log("Sound"));
+});
 
 /**
  * Function parses json a saves info into array
