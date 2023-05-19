@@ -38,14 +38,8 @@ var myview = new ol.View({
 
 const centerCoordinates = ol.proj.fromLonLat([12.5674, 41.8719]); // Coordinate di Roma
 const zoomLevel = 6;
-function cleanCurrentCity()
-{
-    currentCity.longitude = 0;
-    currentCity.latitude = 0;
-}
 
 var currentCity = new city();
-
 var observedBirdsArray = [];  //array containing all BirdsData from JSON
 var observedBirdsNamesArray = []; //array containing all birds names from json
 var selectedBirdName;
@@ -55,13 +49,27 @@ let decimals = 1;
 var output;
 var currentSelectedBirdObservation;
 
+/**
+ * reset current cityData
+ */
+function cleanCurrentCity()
+{
+    currentCity.longitude = 0;
+    currentCity.latitude = 0;
+}
 
+/**
+ * Listener for combobox Element Change
+ */
 combobox.addEventListener("change", function() {
     selectedBirdName = combobox.value;
     console.log("Selected Bird: ", selectedBirdName);
     updateGUI();
 });
 
+/**
+ * FUnction used to avoid unexpected fill of data
+ */
 function clearDataStructures()
 {
     while(observedBirdsArray.length > 0) {
@@ -104,7 +112,7 @@ function saveBirdsObservation(allBirds)
         observedBirdsNamesArray.push(singleBirdObs.commonName);
     })
 
-    //carico la combobox
+    //populate combobox
     loadFoundBirds();
 
     if (debug === 1) console.log("Birds Names")
@@ -121,7 +129,7 @@ function loadFoundBirds()
 {
     combobox.innerHTML = '';
 
-    // Rimuovi tutti gli elementi precedenti dalla combobox
+    //Rimuovi tutti gli elementi precedenti dalla combobox
     while (combobox.options.length > 0) {
         combobox.remove();
     }
@@ -145,8 +153,8 @@ function loadFoundBirds()
     {
         if (combobox.options[i].value === "Select Bird!")
         {
-            combobox.selectedIndex = i; // Imposta l'indice dell'opzione come selezionato
-            break; // Esci dal ciclo
+            combobox.selectedIndex = i;
+            break;
         }
     }
 }
@@ -167,7 +175,7 @@ function getSelectedBirdData()
 
 
 /**
- * this function updates GUI with obs birds
+ * This function updates GUI with obs birds data
  */
 function updateGUI()
 {
@@ -193,8 +201,7 @@ function updateGUI()
 }
 
 /**
- * Recent nearby observations
- * @returns {Promise<void>}
+ *  API get for all birds on a specific coordinate
  */
 async function getBirdsByCoordinates ()
 {
@@ -222,10 +229,11 @@ async function getBirdsByCoordinates ()
     saveBirdsObservation(allBirds);
 }
 
-
-
-
 window.onload = init(); // Call init() when we open the window
+
+/**
+ * Initialize GUI
+ */
 function init() {
     const map = new ol.Map({
         target: 'map',
