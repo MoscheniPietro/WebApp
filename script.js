@@ -135,7 +135,7 @@ function loadFoundBirds()
     }
 
     //add default val
-    let noName = "Select Bird!";
+    let noName = "Seleziona un volatile:";
     let noOption = document.createElement('option');
     noOption.text = noName;
     combobox.add(noOption);
@@ -151,7 +151,7 @@ function loadFoundBirds()
 
     for (var i = 0; i < combobox.options.length; i++)
     {
-        if (combobox.options[i].value === "Select Bird!")
+        if (combobox.options[i].value === "Seleziona un volatile:")
         {
             combobox.selectedIndex = i;
             break;
@@ -183,20 +183,16 @@ function updateGUI()
     console.log("Selected name: ",selectedBirdName);
     console.log("Selected data: ",currentSelectedBirdObservation);
 
-    textToPrint.innerHTML = `
-    <h3 class="font-c">${"Species Code: " + currentSelectedBirdObservation.specCode}</h3>
-    <h3 class="font-c">${"Common Name: " + currentSelectedBirdObservation.commonName} </h3>
-    <h3 class="font-c">${"Scientific Name: " + currentSelectedBirdObservation.scientificName} </h3>
-    <h3 class="font-c">${"Latitude: " + currentSelectedBirdObservation.latitude.toFixed(6)} </h3>
-    <h3 class="font-c">${"Longitude: " + currentSelectedBirdObservation.longitude.toFixed(6)} </h3>
-    <h3 class="font-c">${"Observation Date: " + currentSelectedBirdObservation.observationDt}</h3>
-    <h3 class="font-c">${"BirdsNumber: " + currentSelectedBirdObservation.howManyBirds}</h3>
-    <h3 class="font-c">${"Exotic: " + currentSelectedBirdObservation.exotic} </h3>
-    <h3 class="font-c">${"Observation Reviewed: " + currentSelectedBirdObservation.observatinReviewed}</3>    
-    <h3 class="font-c">${"Location Name: " + currentSelectedBirdObservation.locationName}</h3>
-    <h3 class="font-c">${"Private Location: " + currentSelectedBirdObservation.locPrivate}</h3>    
-    <h3 class="font-c">${"SubId: " + currentSelectedBirdObservation.sId} </h3>
-	<h3 class="font-c">${"Location ID: " + currentSelectedBirdObservation.locationId}</h3>    
+    textToPrint.innerHTML = `<ul>
+    <li>${"Nome comune: <a href=\"https://ebird.org/species/" + currentSelectedBirdObservation.specCode +"?siteLanguage=it\">" + currentSelectedBirdObservation.commonName}</a></li>
+    <li>${"Nome scientifico:  <a href=\"https://ebird.org/species/" + currentSelectedBirdObservation.specCode +"?siteLanguage=it\">" + currentSelectedBirdObservation.scientificName}</a></li><hr />
+    <li>${"Data di avvistamento: " + currentSelectedBirdObservation.observationDt}</li><hr />
+    <li>${"Numero di esemplari avvistati: " + currentSelectedBirdObservation.howManyBirds}</li><hr />
+    <li>${"Latitudine: " + currentSelectedBirdObservation.latitude.toFixed(6)} </li>
+    <li>${"Longitudine: " + currentSelectedBirdObservation.longitude.toFixed(6)} </li>
+    <li>${"Nome luogo avvistamento: " + currentSelectedBirdObservation.locationName}</li><hr />    
+    <li>${"SubId del luogo: " + currentSelectedBirdObservation.sId} </li>
+	<li>${"ID luogo: " + currentSelectedBirdObservation.locationId}</li>    
     `;
 }
 

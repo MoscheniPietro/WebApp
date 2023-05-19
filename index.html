@@ -1,54 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang = "en">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
-    <style>
-        .map {
-            height: 700px;
-            width: 100%;
-            float: right;
-            zoom: 100%;
-
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
-    <title>Birds-APP</title>
-
+    <meta charset = "UTF-8" />
+    <link rel = "stylesheet" href = "https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
+    <link rel = "stylesheet" href = "style.css" />
+    <script src = "https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
+    <title>Birds-APP di Pietro Moscheni</title>
 </head>
 
 <body>
-
-<div class = "grid-container">
-    <div class = "grid-1">
-        <div class = "sidebar">
-            <h1 class="lead">Observed Birds</h1>
-            <!--label for="searchUser"></--label><input type="text" onfocus="this.value=''" value="" id="searchUser" class="form-control" placeholder="Enter Your Location"-->
-            <!--button class="btn-submit" id="submit">Submit</button-->
-            <!-- Image -->
-            <h2 class="lead">DetectedBirds:</h2>
-                <select id="birdComboBox">
-                    <option value=0>No Bird Available</option>
-                </select>
-            <div class="image">
-                <img src="" />
+    <h1>Sito per la ricerca e la mappatura di volatili e uccelli</h1>
+    <h2>Scegliere un punto sulla mappa e selezionare uno dei volatili presenti nel menù a tendina</h2>
+    <div class = "grid-container">
+        <div class = "grid-1">
+            <div class = "sidebar">
+                <div class="select">
+                    <select id = "birdComboBox">
+                        <option value=0>Nessun volatile trovato</option>
+                    </select>
+                </div>
+                <hr />
+                <div id = "content"></div>
             </div>
-            <div id="content"></div>
+        </div>
+        <div class = "grid-2">
+            <div id = "map" class = "map"></div>
         </div>
     </div>
-
-    <div class = "grid-2">
-        <div id = "map" class = "map"></div>
-    </div>
-
-    <div class = "overlay-container">
-        <span id = "feature-name" class = "overlay-text"></span><br>
-        <span id = "feature-additional-info" class = "overlay-text"></span><br>
-    </div>
-
-</div>
-
-<script src = "script.js"></script>
-
+    <script src = "script.js"></script>
 </body>
 </html>

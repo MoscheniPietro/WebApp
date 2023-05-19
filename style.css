@@ -1,75 +1,97 @@
-/*Author Haukun Song*/
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,900&display=swap');
 
 *{
     box-sizing: border-box;
 }
 
+:root {
+    --background-gradient: linear-gradient(30deg, #f39c12 30%, #f1c40f);
+    --gray: #34495e;
+    --darkgray: #2c3e50;
+}
+
+h1{
+    color:#f39c12;
+}
+
+select {
+    appearance: none;
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+    flex: 1;
+    padding: 0 1em;
+    color: #fff;
+    background-color: var(--darkgray);
+    background-image: none;
+    cursor: pointer;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.select {
+    position: relative;
+    display: flex;
+    width: 20em;
+    height: 3em;
+    border-radius: .25em;
+    overflow: hidden;
+}
+
+.select::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1em;
+    background-color: #34495e;
+    transition: .25s all ease;
+    pointer-events: none;
+}
+
+.select:hover::after {
+    color: #f39c12;
+}
+
 body{
-    background: #f08b26;
+    background:#34495e;
     font-family: Lato, sans-serif;
     margin: 0;
     padding: 0;
+    margin-left:20px;
+    color: #FFF;
+}
+
+a:visited, a:link, a:hover{
+    color: #f39c12;
+    text-decoration: none;
+}
+
+hr{
+    border:1px #2c3e50 solid;
+}
+
+ul, h2{
+    font-size:smaller;
+    list-style-type: square;
 }
 
 .grid-container{
     display: grid;
-    grid-template-columns: 14% auto; /*view width*/
+    grid-template-columns: 30% auto; /*view width*/
     grid-template-rows: auto; /*view height*/
-
 }
 
 .sidebar{
-    margin-left:15px;
+    margin-left: 15px;
     justify-content: center;
     text-align: left;
-    -webkit-text-stroke: 0.13px purple;
-
 }
 
 .map {
     height: 800px;
     width: 100%;
     float: right;
-}
-
-/*#layers{*/
-/*    height: 800px;*/
-/*    width: 7.5%;*/
-/*    float: left;*/
-/*    background: linear-gradient(#999 , #eee);*/
-/*    justify-content: center;*/
-/*    text-align: center;*/
-/*}*/
-
-#btn{
-    height:25px;
-    width:40px;
-}
-
-.overlay-container{
-    background:rgba(255, 126, 28, 0.6);
-    width: 100px;
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    padding: 2px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -80px;
-}
-
-/*.overlay-cotainer #feature-additional-info::after{*/
-    /*content: '';*/
-#feature-name {
-
-    /*position: absolute;*/
-    /*top: 100%;*/
-    /*right:40%;*/
-    /*margin-left: -10px;*/
-    /*border-width: 2px;*/
-    /*border-style: ridge;*/
-    /*border-color: #555 transparent transparent transparent;*/
 }
