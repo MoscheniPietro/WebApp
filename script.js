@@ -3,50 +3,75 @@ let debug=1;
 
 class birdsData
 {
-    constructor(spCode, comName, sciName, locId, locName, obsDt, hMany, lat, lng, obsValid, obsReviewed,locPrivate, sId)
+    constructor(spCode, comName, sciName, locId, locName, obsDt, hMany, lat, lng, obsValid, obsReviewed,locPrivate, sId, exo)
     {
-        this.speciesCode = spCode;
+        this.specCode = spCode;
         this.commonName = comName;
         this.scientificName = sciName;
         this.locationId = locId;
         this.locationName = locName;
         this.observationDt = obsDt;
-        this.howMany = hMany;
+        this.howManyBirds = hMany;
         this.latitude = lat;
         this.longitude = lng;
         this.observationValid = obsValid;
         this.observatinReviewed = obsReviewed;
-        this.locationPrivate = locPrivate;
-        this.subId = sId;
+        this.locPrivate = locPrivate;
+        this.sId = sId;
+        this.exotic = exo;
       }
 }
 
-/*const textContent = document.getElementById("content");
-const search = document.getElementById("searchUser");
-const weatherButton = document.getElementById("submit");*/
+class city
+{    constructor(lat, lon)
+{
+    this.latitude = lat;  // [-90.0 ; 90.0]
+    this.longitude = lon; // [-180.0 ; 180.0]
+}
+}
 
-var observatedBirdsArray = [];  //array containing all BirdsData from JSON
-var observatedBirdsNamesArray = []; //array containing all birds names from json
+// view
+var myview = new ol.View({
+    center: [1350766.668508934, 5177943.850979362], // map.getView().getCenter()
+    zoom: 2,
+})
+
+const centerCoordinates = ol.proj.fromLonLat([12.5674, 41.8719]); // Coordinate di Roma
+const zoomLevel = 6;
+function cleanCurrentCity()
+{
+    currentCity.longitude = 0;
+    currentCity.latitude = 0;
+}
+
+var currentCity = new city();
+
+var observedBirdsArray = [];  //array containing all BirdsData from JSON
+var observedBirdsNamesArray = []; //array containing all birds names from json
 var selectedBirdName;
+var textToPrint = document.getElementById("content");
+var combobox = document.getElementById('birdComboBox');
+let decimals = 1;
+var output;
+var currentSelectedBirdObservation;
 
-/**
- *
- */
-function getHour() {
-    var selectedBirdName;
-  
-    
-    var selectElement = document.querySelector('#birdComboBox');
-    selectedBirdName = selectElement.options[selectElement.selectedIndex].value;
-  
-    return selectedBirdName;
-  }
-  
 
-/**
- * Function parses json a saves info into array
- * @param allBirds
- */
+combobox.addEventListener("change", function() {
+    selectedBirdName = combobox.value;
+    console.log("Selected Bird: ", selectedBirdName);
+    updateGUI();
+});
+
+function clearDataStructures()
+{
+    while(observedBirdsArray.length > 0) {
+        observedBirdsArray.pop();
+    }
+
+    while(observedBirdsNamesArray.length > 0) {
+        observedBirdsNamesArray.pop();
+    }
+}
 
 /**
  * Get data from JS
@@ -55,103 +80,117 @@ function getHour() {
  */
 function saveBirdsObservation(allBirds)
 {
-    //pulizia strutture
-    observatedBirdsArray.clear;
-    observatedBirdsNamesArray.clear;
+    clearDataStructures()
 
     allBirds.forEach((obsBird) =>
     {
         let singleBirdObs = new birdsData();
-        singleBirdObs.speciesCode = obsBird.speciesCode;
+        singleBirdObs.specCode = obsBird.speciesCode;
         singleBirdObs.commonName = obsBird.comName;
         singleBirdObs.scientificName = obsBird.sciName;
         singleBirdObs.locationId = obsBird.locId;
         singleBirdObs.locationName = obsBird.locName;
         singleBirdObs.observationDt = obsBird.obsDt;
-        singleBirdObs.howMany = obsBird.howMany;
+        singleBirdObs.howManyBirds = obsBird.howMany;
         singleBirdObs.latitude = obsBird.lat;
         singleBirdObs.longitude = obsBird.lng;
-        singleBirdObs.observationValid = obsBird.obsReviewed;
+        singleBirdObs.observationValid = obsBird.obsValid;
         singleBirdObs.observatinReviewed = obsBird.obsReviewed;
-        singleBirdObs.locationPrivate = obsBird.locationPrivate;
-        singleBirdObs.subId = obsBird.subId;
+        singleBirdObs.locPrivate = obsBird.locationPrivate;
+        singleBirdObs.sId = obsBird.subId;
+        singleBirdObs.exotic = obsBird.exoticCategory;
 
-        observatedBirdsArray.push(singleBirdObs);
-        observatedBirdsNamesArray.push(singleBirdObs.commonName);
+        observedBirdsArray.push(singleBirdObs);
+        observedBirdsNamesArray.push(singleBirdObs.commonName);
     })
 
+    //carico la combobox
+    loadFoundBirds();
+
     if (debug === 1) console.log("Birds Names")
-    if (debug === 1) console.log(observatedBirdsNamesArray);
+    if (debug === 1) console.log(observedBirdsNamesArray);
 
     if (debug === 1) console.log("Saved Birds")
-    if (debug === 1) console.log(observatedBirdsArray);
+    if (debug === 1) console.log(observedBirdsArray);
 }
 
-function loadFoundBirds() {
-    
-    var combobox = document.getElementById('birdComboBox');
+/**
+ * carica tutti i nomi nella combobox
+ */
+function loadFoundBirds()
+{
     combobox.innerHTML = '';
-  
-    for (var i = 0; i < observatedBirdsNamesArray.length; i++) {
-      var name = observatedBirdsNamesArray[i];
-      var option = document.createElement('option');
+
+    // Rimuovi tutti gli elementi precedenti dalla combobox
+    while (combobox.options.length > 0) {
+        combobox.remove();
+    }
+
+    //add default val
+    let noName = "Select Bird!";
+    let noOption = document.createElement('option');
+    noOption.text = noName;
+    combobox.add(noOption);
+
+    for (let i = 0; i < observedBirdsNamesArray.length; i++) {
+      let name = observedBirdsNamesArray[i];
+      let option = document.createElement('option');
 
       option.text = name;
-      option.value = name;
-  
-      
-      combobox.appendChild(option);
+      combobox.add(option);
+      if(debug === 1) console.log("Carico: " + name);
     }
-  }
-  
+
+    for (var i = 0; i < combobox.options.length; i++)
+    {
+        if (combobox.options[i].value === "Select Bird!")
+        {
+            combobox.selectedIndex = i; // Imposta l'indice dell'opzione come selezionato
+            break; // Esci dal ciclo
+        }
+    }
+}
+
 
 /**
- *
+ * get bird data to print
  */
-function getSelectedBirdData() {
-    var currentSelectedBirdObservation;
+function getSelectedBirdData()
+{
+    if(debug === 1) console.log("SelectedBirdName", selectedBirdName);
 
-    var selectedBirdName = document.getElementById('birdComboBox');
-    for (var i = 0; i < observatedBirdsArray.length; i++) {
-      var observation = observatedBirdsArray[i];
-  
-      if (observation.name === selectedBirdName) {
-        currentSelectedBirdObservation = observation;
-        break;
-      }
-    }
-  
-    return currentSelectedBirdObservation;
-  }
-  
+    currentSelectedBirdObservation = observedBirdsArray.find(bird => bird.commonName === selectedBirdName);
+
+    if(debug === 1) console.log("SelectedBird");
+    if(debug === 1) console.log(currentSelectedBirdObservation);
+}
+
 
 /**
  * this function updates GUI with obs birds
  */
-/*function updateGUI()
+function updateGUI()
 {
-    let selectedBird = getSelectedBirdData();
-    console.log(selectedBirdName);
+    getSelectedBirdData();
+    console.log("Selected name: ",selectedBirdName);
+    console.log("Selected data: ",currentSelectedBirdObservation);
 
-    //TODO aggiungere le variabili corrette
-
-    //updating details into HTML
-    textContent.innerHTML = `
-    <h2 class="font-c">${selectedBird.speciesCode.toUpperCase()}</h2>
-    <h4 class="font-c">${"Lat: " + selectedBird.commonName.toFixed(6)} </h4>
-    <h4 class="font-c">${"Lon: " + selectedBird.scientificName.toFixed(6)} </h4>
-    <h3 class="font-c">${selectedBird.locationId}</h3>    
-    <h4 class="font-c">${"Temperature: " + selectedBird.locationName.toFixed(decimals)} &degC</h4>
-    <h4 class="font-c">${"Humidity: " + selectedBird.observationDt.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Wind Speed: " + selectedBird.howMany.toFixed(decimals) + " km/h"}</h4>
-    <h4 class="font-c">${"Cloud Cover: " + selectedBird.latitude.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain Probability: " + selectedBird.longitude.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Rain: " + selectedBird.observatinReviewed.toFixed(decimals) + " mm"}</h4>
-    <h4 class="font-c">${"Snow Probability: " + selectedBird.locationPrivate.toFixed(decimals)} &percnt;</h4>
-    <h4 class="font-c">${"Snow: " + selectedBird.subId.toFixed(decimals) + " mm"} </h4>
+    textToPrint.innerHTML = `
+    <h3 class="font-c">${"Species Code: " + currentSelectedBirdObservation.specCode}</h3>
+    <h3 class="font-c">${"Common Name: " + currentSelectedBirdObservation.commonName} </h3>
+    <h3 class="font-c">${"Scientific Name: " + currentSelectedBirdObservation.scientificName} </h3>
+    <h3 class="font-c">${"Latitude: " + currentSelectedBirdObservation.latitude.toFixed(6)} </h3>
+    <h3 class="font-c">${"Longitude: " + currentSelectedBirdObservation.longitude.toFixed(6)} </h3>
+    <h3 class="font-c">${"Observation Date: " + currentSelectedBirdObservation.observationDt}</h3>
+    <h3 class="font-c">${"BirdsNumber: " + currentSelectedBirdObservation.howManyBirds}</h3>
+    <h3 class="font-c">${"Exotic: " + currentSelectedBirdObservation.exotic} </h3>
+    <h3 class="font-c">${"Observation Reviewed: " + currentSelectedBirdObservation.observatinReviewed}</3>    
+    <h3 class="font-c">${"Location Name: " + currentSelectedBirdObservation.locationName}</h3>
+    <h3 class="font-c">${"Private Location: " + currentSelectedBirdObservation.locPrivate}</h3>    
+    <h3 class="font-c">${"SubId: " + currentSelectedBirdObservation.sId} </h3>
+	<h3 class="font-c">${"Location ID: " + currentSelectedBirdObservation.locationId}</h3>    
     `;
-    
-}*/
+}
 
 /**
  * Recent nearby observations
@@ -164,7 +203,6 @@ async function getBirdsByCoordinates ()
     //headers setup
     var myHeaders = new Headers();
     myHeaders.append("X-eBirdApiToken", APIKey);
-
 
     const locationBaseUrl = "https://api.ebird.org/v2/data/obs/geo/recent?";
     const query = `lat=${currentCity.latitude.toFixed(2)}&lng=${currentCity.longitude.toFixed(2)}&key=${APIKey}`;
@@ -179,65 +217,13 @@ async function getBirdsByCoordinates ()
     currentCity.cityName = LocalizedName;
     currentCity.cityCode = Key;
     if (debug === 1) console.log(currentCity);
+
+    //salvo gli uccelli trovati
     saveBirdsObservation(allBirds);
 }
 
-/**
- * This function get the city key given the name, Milan
- * I can't optimize avoiding queries because a mm move of click can change the city
- * @returns {Promise<void>} populates the current city
- */
 
-//AAA Vedere se farla funzionare o rimuoverla
-async function getBirdsByCityName()
-{
-    const locationBaseUrl = "https://dataservice.accuweather.com/locations/v1/cities/search";
-    const cityName = currentCity.cityName;
 
-    const res = await fetch(locationBaseUrl + query);
-    const tmpCity = await res.json()
-
-    if(debug === 1)
-    {
-        console.log("City by name\n");
-        console.log(tmpCity);
-    }
-
-    const {GeoPosition, Key} = tmpCity[0];
-    //fill our city info
-    currentCity.cityCode = Key;
-    //unused in further development ATM
-    currentCity.latitude = GeoPosition.Latitude;
-    currentCity.longitude = GeoPosition.Longitude;
-    cities.push(currentCity);
-    if (debug === 1) console.log(currentCity);
-}
-
-const url_carto_cdn = 'http://{1-4}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
-
-//connects from html element and script
-const textContent = document.getElementById("content");
-const search = document.getElementById("searchUser");
-const weatherButton = document.getElementById("submit");
-const image = document.querySelector(".image img");
-
-let selectElement;
-let decimals = 1;
-var output;
-
-var maxPercentage = 100;
-/**
- * Click event listener
- */
-
-// view
-var myview = new ol.View({
-        center: [1350766.668508934, 5177943.850979362], // map.getView().getCenter()
-        zoom: 2,
-    })
-
-const centerCoordinates = ol.proj.fromLonLat([12.5674, 41.8719]); // Coordinate di Roma
-const zoomLevel = 6;
 
 window.onload = init(); // Call init() when we open the window
 function init() {
@@ -338,7 +324,7 @@ function init() {
  * Get the weather info when click on the map
  * @param evt click event
  */
-const getMapCoordOnClick = (evt) => 
+const getMapCoordOnClick = (evt) =>
 {
     console.log("getMapCoordOnClick invoked");
     //tuple of coordinates
@@ -351,7 +337,7 @@ const getMapCoordOnClick = (evt) =>
     console.log(currentCity);
 
     // Also only represent the city name on the console, can't print it and call it now; It's the problem of async and cannot get the OBJECT correctly
-    getBirdsByCoordinates().then(updateGUI);
+    getBirdsByCoordinates().then(loadFoundBirds);
 }
 
 /**
@@ -366,23 +352,3 @@ function zoomIn(Lat , Lon)
     })
 }
 
-class city
-{
-    constructor(cityC, cityN, lat, lon)
-    {
-        this.cityCode = cityC;
-        this.cityName = cityN;
-        this.latitude = lat;  // [-90.0 ; 90.0]
-        this.longitude = lon; // [-180.0 ; 180.0]
-    }
-}
-var currentCity = new city();
-var currentCityForecast = []; //array of forecast of 12 hours
-
-function cleanCurrentCity()
-{
-    currentCity.cityCode = 0;
-    currentCity.cityName = null;
-    currentCity.longitude = 0;
-    currentCity.latitude = 0;
-}
